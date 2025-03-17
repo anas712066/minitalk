@@ -18,5 +18,14 @@
 # include <signal.h>
 # include <stdlib.h>
 # include <string.h>
+# include <errno.h>
+# include <limits.h>
+# include <stdbool.h>
+
+# define BUSY 0
+# define READY 1
+
+void    Signal(int nsig, void *handler, bool use_siginfo);
+void    Kill(pid_t pid, int signum);
 
 #endif
