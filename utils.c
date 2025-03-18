@@ -12,11 +12,11 @@
 
 #include "minitalk.h"
 
-void	Signal(int sig, void *handler, bool use_siginfo)
+void	signal_handler(int sig, void *handler, bool use_siginfo)
 {
-	struct	sigaction;
+	sigaction	sa;
 
-	sa = {0};
+	sa.sa_mask = 0;
 	if (use_siginfo)
 	{
 		sa.sa_sigaction = handler;
@@ -27,7 +27,6 @@ void	Signal(int sig, void *handler, bool use_siginfo)
 	sigemptyset(&sa.sa_mask);
 	sigaddset(&sa.sa_mask, SIGUSR1);
 	sigaddset(&sa.sa_mask, SIGUSR2);
-    
 	if (sigaction(sig, &sa, NULL) < 0)
 	{
 		perror("Signal handler setup failed");
@@ -35,7 +34,7 @@ void	Signal(int sig, void *handler, bool use_siginfo)
 	}
 }
 
-void	Kill(pid_t pid, int signum)
+void	kill_process(pid_t pid, int signum)
 {
 	if (kill(pid, signum) < 0)
 	{
@@ -44,40 +43,44 @@ void	Kill(pid_t pid, int signum)
 	}
 }
 
-void	print_pending_signals()
+void	print_pending_signals(void)
 {
-    sigset_t pending;
-    if (sigpending(&pending) == -1) {
-        perror("sigpending");
-        exit(EXIT_FAILURE);
-    }
+	sigset_t	pending;
+	int			i;
 
-    printf("\n=== Pending Signals ===\n");
-    for (int i = 1; i < NSIG; i++) {
-        if (sigismember(&pending, i)) {
-            printf("Signal %d (%s) is pending\n", i, strsignal(i));
-        }
-    }
-    printf("=======================\n\n");
+	if (sigpending(&pending) == -1)
+	{
+		perror("sigpending");
+		exit(EXIT_FAILURE);
+	}
+	printf("\n=== Pending Signals ===\n");
+	i = 1;
+	while (i < NSIG)
+	{
+		if (sigismember(&pending, i))
+			printf("Signal %d (%s) is pending\n", i, strsignal(i));
+		i++;
+	}
+	printf("=======================\n\n");
 }
 
-void	print_blocked_signals()
+void	print_blocked_signals(void)
 {
-	int	i;
+	sigset_t	blocked;
+	int			i;
 
-	i = 1;
-	sigset_t blocked;
 	if (sigprocmask(SIG_BLOCK, NULL, &blocked) == -1)
 	{
 		perror("sigprocmask");
 		exit(EXIT_FAILURE);
 	}
 	printf("\n=== Blocked Signals ===\n");
-	for (int i = 1; i < NSIG; i++)
+	i = 1;
+	while (i < NSIG)
 	{
-		if (sigismember(&blocked, i)) {
-		printf("Signal %d (%s) is blocked\n", i, strsignal(i));
+		if (sigismember(&blocked, i))
+			printf("Signal %d (%s) is blocked\n", i, strsignal(i));
+		i++;
 	}
-}
 	printf("=======================\n");
 }
