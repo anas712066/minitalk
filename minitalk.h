@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #ifndef MINITALK_H
-#define MINITALK_H
+# define MINITALK_H
 
 # include <stdio.h>
 # include <unistd.h>
@@ -25,7 +25,7 @@
 # define BUSY 0
 # define READY 1
 
-void    Signal(int nsig, void *handler, bool use_siginfo);
-void    Kill(pid_t pid, int signum);
+void	Signal(int nsig, void *handler, bool use_siginfo);
+void	Kill(pid_t pid, int signum);
 
 #endif
