@@ -1,15 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mumajeed <mumajeed@student.42barcelon      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/18 22:11:49 by mumajeed          #+#    #+#             */
+/*   Updated: 2025/03/18 22:11:50 by mumajeed         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minitalk.h"
 
-/**
- * Signal - Sets up signal handler with optional siginfo support
- * @sig: Signal to handle
- * @handler: Signal handler function (void* to support both types)
- * @use_siginfo: Boolean to determine if siginfo is needed
- */
 void	Signal(int sig, void *handler, bool use_siginfo)
 {
-	struct sigaction	sa = {0};
+	struct	sigaction;
 
+	sa = {0};
 	if (use_siginfo)
 	{
 		sa.sa_sigaction = handler;
@@ -17,8 +24,6 @@ void	Signal(int sig, void *handler, bool use_siginfo)
 	}
 	else
 		sa.sa_handler = handler;
- 
-	/* Block both signals during handler execution */
 	sigemptyset(&sa.sa_mask);
 	sigaddset(&sa.sa_mask, SIGUSR1);
 	sigaddset(&sa.sa_mask, SIGUSR2);
@@ -30,11 +35,6 @@ void	Signal(int sig, void *handler, bool use_siginfo)
 	}
 }
 
-/**
- * Kill - Wrapper for kill system call with error handling
- * @pid: Process ID to send signal to
- * @signum: Signal number to send
- */
 void	Kill(pid_t pid, int signum)
 {
 	if (kill(pid, signum) < 0)
@@ -44,8 +44,7 @@ void	Kill(pid_t pid, int signum)
 	}
 }
 
-
-void print_pending_signals()
+void	print_pending_signals()
 {
     sigset_t pending;
     if (sigpending(&pending) == -1) {
@@ -62,21 +61,23 @@ void print_pending_signals()
     printf("=======================\n\n");
 }
 
-// Function to print the list of blocked signals
-void print_blocked_signals()
+void	print_blocked_signals()
 {
-    sigset_t blocked;
-    if (sigprocmask(SIG_BLOCK, NULL, &blocked) == -1) {
-        perror("sigprocmask");
-        exit(EXIT_FAILURE);
-    }
+	int	i;
 
-    printf("\n=== Blocked Signals ===\n");
-    for (int i = 1; i < NSIG; i++) {
-        if (sigismember(&blocked, i)) {
-            printf("Signal %d (%s) is blocked\n", i, strsignal(i));
-        }
-    }
-    printf("=======================\n");
+	i = 1;
+	sigset_t blocked;
+	if (sigprocmask(SIG_BLOCK, NULL, &blocked) == -1)
+	{
+		perror("sigprocmask");
+		exit(EXIT_FAILURE);
+	}
+	printf("\n=== Blocked Signals ===\n");
+	for (int i = 1; i < NSIG; i++)
+	{
+		if (sigismember(&blocked, i)) {
+		printf("Signal %d (%s) is blocked\n", i, strsignal(i));
+	}
 }
-
+	printf("=======================\n");
+}
