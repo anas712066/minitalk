@@ -12,34 +12,43 @@
 
 #include "minitalk.h"
 
-static void	handler(int sig, siginfo_t *info, void *more_info)
+static void	process_signal(int sig, char *c, int *bit)
 {
-	(void)more_info;
-	static char		c = 0;
-	static int		bit = 0;
-	static pid_t	goku = 0;
+	if (sig == SIGUSR1)
+		*c |= (0b10000000 >> *bit);
+	else if (sig == SIGUSR2)
+		*c &= ~(0x80 >> *bit);
+	(*bit)++;
+}
 
-	if (info->si_pid)
-		goku = info->si_pid;
-	if (SIGUSR1 == sig)
-		c |= (0b10000000 >> bit);
-	else if (SIGUSR2 == sig)
-		c &= ~(0x80 >> bit);
-	bit++;
-	if (CHAR_BIT == bit)
+static void	handle_char(char *c, pid_t goku, int *bit)
+{
+	if (*bit == CHAR_BIT)
 	{
-		bit = 0;
-		if ('\0' == c)
+		*bit = 0;
+		if (*c == '\0')
 		{
 			write(STDOUT_FILENO, "\n", 1);
 			Kill(goku, SIGUSR2);
-			c = 0;
-			return ;
 		}
-		write(STDOUT_FILENO, &c, 1);
-		c = 0;
+		else
+			write(STDOUT_FILENO, c, 1);
+		*c = 0;
 	}
 	Kill(goku, SIGUSR1);
+}
+
+static void	handler(int sig, siginfo_t *info, void *more_info)
+{
+	static char	c;
+	static int	bit;
+	static pid_t goku;
+
+	(void)more_info;
+	if (!goku && info->si_pid)
+		goku = info->si_pid;
+	process_signal(sig, &c, &bit);
+	handle_char(&c, goku, &bit);
 }
 
 int	main(int ac, char **av)

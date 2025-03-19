@@ -12,7 +12,7 @@
 
 #include "minitalk.h"
 
-void	Signal(int sig, void (*handler)(int), void (*siginfo_handler)
+void	Signal(int sig, void (*handler)(int), void (*siginfo_handler) \
 	(int, siginfo_t *, void *), bool use_siginfo)
 {
 	struct sigaction	sa;
