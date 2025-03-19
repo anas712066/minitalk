@@ -14,6 +14,7 @@
 
 static void	handler(int sig, siginfo_t *info, void *more_info)
 {
+	(void)more_info;
 	static char		c = 0;
 	static int		bit = 0;
 	static pid_t	goku = 0;
@@ -43,14 +44,15 @@ static void	handler(int sig, siginfo_t *info, void *more_info)
 
 int	main(int ac, char **av)
 {
+	(void)av;
 	if (ac != 1)
 	{
 		fputs("Usage: ./server\n", stderr);
 		return (EXIT_FAILURE);
 	}
-	printf("Server PID: %d\n", getpid());
-	Signal(SIGUSR1, handler, true);
-	Signal(SIGUSR2, handler, true);
+	ft_printf("Server PID: %d\n", getpid());
+	Signal(SIGUSR1, NULL, handler, true);
+	Signal(SIGUSR2, NULL, handler, true);
 	while (1337)
 		pause();
 	return (EXIT_SUCCESS);

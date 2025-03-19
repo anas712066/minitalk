@@ -16,12 +16,14 @@ volatile sig_atomic_t	g_kingkai = BUSY;
 
 static void	end_handler(int sig)
 {
+	(void)sig;
 	fputs("\n\t✅ Message received ✅\n", stdout);
 	exit(EXIT_SUCCESS);
 }
 
 static void	ack_handler(int sig)
 {
+	(void)sig;
 	g_kingkai = READY;
 }
 
@@ -54,10 +56,10 @@ int	main(int ac, char **av)
 		fputs("Usage: ./client <kingkai> \"message\"\n", stderr);
 		return (EXIT_FAILURE);
 	}
-	kingkai = atoi(av[1]);
+	kingkai = ft_atoi(av[1]);
 	message = av[2];
-	Signal(SIGUSR1, ack_handler, false);
-	Signal(SIGUSR2, end_handler, false);
+	Signal(SIGUSR1, ack_handler, NULL, false);
+	Signal(SIGUSR2, end_handler, NULL, false);
 	i = 0;
 	while (message[i])
 		send_char(message[i++], kingkai);

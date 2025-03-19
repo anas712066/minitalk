@@ -12,21 +12,24 @@
 
 #include "minitalk.h"
 
-void	signal_handler(int sig, void *handler, bool use_siginfo)
+void	Signal(int sig, void (*handler)(int), void (*siginfo_handler)
+	(int, siginfo_t *, void *), bool use_siginfo)
 {
-	sigaction	sa;
+	struct sigaction	sa;
 
-	sa.sa_mask = 0;
-	if (use_siginfo)
-	{
-		sa.sa_sigaction = handler;
-		sa.sa_flags = SA_SIGINFO;
-	}
-	else
-		sa.sa_handler = handler;
 	sigemptyset(&sa.sa_mask);
 	sigaddset(&sa.sa_mask, SIGUSR1);
 	sigaddset(&sa.sa_mask, SIGUSR2);
+	if (use_siginfo)
+	{
+		sa.sa_sigaction = siginfo_handler;
+		sa.sa_flags = SA_SIGINFO;
+	}
+	else
+	{
+		sa.sa_handler = handler;
+		sa.sa_flags = 0;
+	}
 	if (sigaction(sig, &sa, NULL) < 0)
 	{
 		perror("Signal handler setup failed");
@@ -34,7 +37,7 @@ void	signal_handler(int sig, void *handler, bool use_siginfo)
 	}
 }
 
-void	kill_process(pid_t pid, int signum)
+void	Kill(pid_t pid, int signum)
 {
 	if (kill(pid, signum) < 0)
 	{
@@ -53,12 +56,12 @@ void	print_pending_signals(void)
 		perror("sigpending");
 		exit(EXIT_FAILURE);
 	}
-	printf("\n=== Pending Signals ===\n");
+	ft_printf("\n=== Pending Signals ===\n");
 	i = 1;
 	while (i < NSIG)
 	{
 		if (sigismember(&pending, i))
-			printf("Signal %d (%s) is pending\n", i, strsignal(i));
+			ft_printf("Signal %d (%s) is pending\n", i, strsignal(i));
 		i++;
 	}
 	printf("=======================\n\n");
@@ -74,13 +77,13 @@ void	print_blocked_signals(void)
 		perror("sigprocmask");
 		exit(EXIT_FAILURE);
 	}
-	printf("\n=== Blocked Signals ===\n");
+	ft_printf("\n=== Blocked Signals ===\n");
 	i = 1;
 	while (i < NSIG)
 	{
 		if (sigismember(&blocked, i))
-			printf("Signal %d (%s) is blocked\n", i, strsignal(i));
+			ft_printf("Signal %d (%s) is blocked\n", i, strsignal(i));
 		i++;
 	}
-	printf("=======================\n");
+	ft_printf("=======================\n");
 }

@@ -22,21 +22,20 @@ CFLAGS = -Wall -Wextra -Werror
 LIBFT_DIR = ./libft
 PRINTF_DIR = ./ft_printf
 
-# Librerías
 LIBFT = $(LIBFT_DIR)/libft.a
 PRINTF = $(PRINTF_DIR)/libftprintf.a
 
-# Archivos fuente y objeto
 SRCS_CLIENT = client.c utils.c
 SRCS_SERVER = server.c utils.c
 OBJS_CLIENT = $(SRCS_CLIENT:.c=.o)
 OBJS_SERVER = $(SRCS_SERVER:.c=.o)
 
-# Dependencias
 INCLUDES = -I. -I$(LIBFT_DIR) -I$(PRINTF_DIR)
 LIBS = -L$(LIBFT_DIR) -lft -L$(PRINTF_DIR) -lftprintf
 
-# Reglas
+%.o: %.c minitalk.h
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
 all: $(LIBFT) $(PRINTF) $(NAME_CLIENT) $(NAME_SERVER)
 
 $(LIBFT):
