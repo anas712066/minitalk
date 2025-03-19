@@ -38,8 +38,8 @@ static void	send_char(char c, pid_t kingkai)
 			Kill(kingkai, SIGUSR2);
 		bit++;
 		while (BUSY == g_kingkai)
-			usleep(42)
-			g_kingkai = BUSY;
+			usleep(42);
+		g_kingkai = BUSY;
 	}
 }
 
