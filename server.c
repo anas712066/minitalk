@@ -6,7 +6,7 @@
 /*   By: mumajeed <mumajeed@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 22:08:38 by mumajeed          #+#    #+#             */
-/*   Updated: 2025/03/18 22:08:39 by mumajeed         ###   ########.fr       */
+/*   Updated: 2025/03/20 14:21:55 by mumajeed         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,10 @@ static void	handle_char(char *c, pid_t *goku, int *bit, pid_t sender_pid)
 {
 	if (*goku != sender_pid)
 	{
-		ft_printf("Warning: Signal received from unexpected PID: %d (Expected: %d)\n",
+		ft_printf("Warning: Signal received from unexpected PID: %d \
+			(Expected: %d)\n",
 			sender_pid, *goku);
-		return;
+		return ;
 	}
 	if (*bit == CHAR_BIT)
 	{
@@ -46,9 +47,9 @@ static void	handle_char(char *c, pid_t *goku, int *bit, pid_t sender_pid)
 
 static void	handler(int sig, siginfo_t *info, void *more_info)
 {
-	static char	c;
-	static int	bit;
-	static pid_t goku;
+	static char		c;
+	static int		bit;
+	static pid_t	goku;
 
 	(void)more_info;
 	if (bit == 0 && info->si_pid)
