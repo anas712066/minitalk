@@ -18,7 +18,7 @@ static void	end_handler(int sig)
 {
 	(void)sig;
 	fputs("\n\t✅ Message received ✅\n", stdout);
-	//g_kingkai = READY;
+	g_kingkai = READY;
 	exit(EXIT_SUCCESS);
 }
 
