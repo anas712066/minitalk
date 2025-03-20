@@ -12,7 +12,7 @@
 
 #include "minitalk.h"
 
-void	Signal(int sig, void (*handler)(int), void (*siginfo_handler) \
+void	signal_setup(int sig, void (*handler)(int), void (*siginfo_handler) \
 	(int, siginfo_t *, void *), bool use_siginfo)
 {
 	struct sigaction	sa;
@@ -37,7 +37,7 @@ void	Signal(int sig, void (*handler)(int), void (*siginfo_handler) \
 	}
 }
 
-void	Kill(pid_t pid, int signum)
+void	send_signal(pid_t pid, int signum)
 {
 	if (kill(pid, signum) < 0)
 	{

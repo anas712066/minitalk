@@ -18,6 +18,7 @@ static void	end_handler(int sig)
 {
 	(void)sig;
 	fputs("\n\t✅ Message received ✅\n", stdout);
+	//g_kingkai = READY;
 	exit(EXIT_SUCCESS);
 }
 
@@ -35,9 +36,9 @@ static void	send_char(char c, pid_t kingkai)
 	while (bit < CHAR_BIT)
 	{
 		if (c & (0x80 >> bit))
-			Kill(kingkai, SIGUSR1);
+			send_signal(kingkai, SIGUSR1);
 		else
-			Kill(kingkai, SIGUSR2);
+			send_signal(kingkai, SIGUSR2);
 		bit++;
 		while (BUSY == g_kingkai)
 			usleep(42);
@@ -58,8 +59,8 @@ int	main(int ac, char **av)
 	}
 	kingkai = ft_atoi(av[1]);
 	message = av[2];
-	Signal(SIGUSR1, ack_handler, NULL, false);
-	Signal(SIGUSR2, end_handler, NULL, false);
+	signal_setup(SIGUSR1, ack_handler, NULL, false);
+	signal_setup(SIGUSR2, end_handler, NULL, false);
 	i = 0;
 	while (message[i])
 		send_char(message[i++], kingkai);

@@ -27,9 +27,9 @@
 # define BUSY	0
 # define READY	1
 
-void	signal(int sig, void (*handler)(int),
+void	signal_setup(int sig, void (*handler)(int),
 			void (*siginfo_handler)
 			(int, siginfo_t *, void *), bool use_siginfo);
-void	Kill(pid_t pid, int signum);
+void	send_signal(pid_t pid, int signum);
 
 #endif

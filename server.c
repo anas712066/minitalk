@@ -21,21 +21,27 @@ static void	process_signal(int sig, char *c, int *bit)
 	(*bit)++;
 }
 
-static void	handle_char(char *c, pid_t goku, int *bit)
+static void	handle_char(char *c, pid_t *goku, int *bit, pid_t sender_pid)
 {
+	if (*goku != sender_pid)
+	{
+		ft_printf("Warning: Signal received from unexpected PID: %d (Expected: %d)\n",
+			sender_pid, *goku);
+		return;
+	}
 	if (*bit == CHAR_BIT)
 	{
 		*bit = 0;
 		if (*c == '\0')
 		{
 			write(STDOUT_FILENO, "\n", 1);
-			Kill(goku, SIGUSR2);
+			send_signal(*goku, SIGUSR2);
 		}
 		else
 			write(STDOUT_FILENO, c, 1);
 		*c = 0;
 	}
-	Kill(goku, SIGUSR1);
+	send_signal(*goku, SIGUSR1);
 }
 
 static void	handler(int sig, siginfo_t *info, void *more_info)
@@ -45,10 +51,10 @@ static void	handler(int sig, siginfo_t *info, void *more_info)
 	static pid_t goku;
 
 	(void)more_info;
-	if (!goku && info->si_pid)
+	if (bit == 0 && info->si_pid)
 		goku = info->si_pid;
 	process_signal(sig, &c, &bit);
-	handle_char(&c, goku, &bit);
+	handle_char(&c, &goku, &bit, info->si_pid);
 }
 
 int	main(int ac, char **av)
@@ -60,8 +66,8 @@ int	main(int ac, char **av)
 		return (EXIT_FAILURE);
 	}
 	ft_printf("Server PID: %d\n", getpid());
-	Signal(SIGUSR1, NULL, handler, true);
-	Signal(SIGUSR2, NULL, handler, true);
+	signal_setup(SIGUSR1, NULL, handler, true);
+	signal_setup(SIGUSR2, NULL, handler, true);
 	while (1337)
 		pause();
 	return (EXIT_SUCCESS);
